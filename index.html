@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- 	<div id="allClasses"></div> -->
+
+	<input type="text" id="addClass-input" />
+	<button id="addClass-btn">Add Class</button>
+
+	<button id="show-schedule">Show Schedule</button>
+
+	<button id="show-classes">Show All Available Classes</button>
+
+	<button id="show-homework">Show Homework</button>
+
+	<button id="show-grade">Show Grades</button>
+
+	<div id="allclasses"></div>
+
+	
+
+	<script>
+	/* jshint esversion:6 */
+
+//only displaying data 
+		function getClasses() {
+
+			$("#allclasses").html("");
+
+			$.get("/allclasses", function(response) {
+				response = JSON.parse(response);
+				console.log(response);
+				for (var courseName in response){
+					$("#allclasses").append(courseName + " <br/>");
+				}
+			
+			});
+		}
+
+		$("#show-classes").click(getClasses);
+
+
+		function getGrades() {
+
+			$("#allclasses").html("");
+
+			$.get("/grades", function(response) {
+				response = JSON.parse(response);
+				console.log(response);
+				for (var course of response) {
+					$("#allclasses").append(course + " <br/>");
+				}
+			});
+		}
+
+		$("#show-grade").click(getGrades);
+
+
+		function getSchedule() {
+
+			$("#allclasses").html("");
+
+			$.get("/schedule", function(response) {
+				response = JSON.parse(response);
+				for (var course of response) {
+					$("#allclasses").append(course + " <br />");
+				}
+			});
+		}
+
+		$("#show-schedule").click(getSchedule);
+
+
+		//add a class
+		function addToSchedule(className) {
+			$.post("/schedule", className);
+		}
+
+		$("#addClass-btn").click(function() {
+			addToSchedule($("#addClass-input").val());
+		});
+
+
+
+		//show Homework
+		function getHomework() {
+
+			$("#allclasses").html("");
+
+			$.get("/homework", function(response) {
+				response = JSON.parse(response);
+				console.log(response);
+				for (var course of response) {
+
+					if (course.homework == true) {
+						$("#allclasses").append(course.courseName + ": homework is done. <br />");
+					} else if (course.homework == false) {
+						$("#allclasses").append(course.courseName + ": homework is not done <br /><button id='doHomework-btn'>Do Homework</button><br />");
+					}
+				}
+
+			});
+		}
+
+		$("#show-homework").click(getHomework);
+
+
+		//do Homework
+		function doHomework(className) {
+			$.post("/homework", className);
+		}
+
+		$("#doHomework-btn").click(function() {
+			doHomework();
+		});
+
+		//how do you know which class you're editing the hw for?
+
+
+
+
+		
+
+	</script>
+</body>
+</html>
